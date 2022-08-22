@@ -1,0 +1,13 @@
+enum PlaceType = {
+    classroom,
+    landmark,
+    restaurant,
+    parking
+}
+
+PlaceData {
+    name: string,
+    type: PlaceType,
+    location : { latitude, longitude },
+    floor: integer
+}
