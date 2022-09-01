@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'OpenMaps Demo',
+      title: 'OpenStreetMaps Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -72,6 +72,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     location.changeSettings(interval: 500);
 
+    // called once the widget loads
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getPermissions();
       await setupMap();
@@ -142,11 +143,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       polylines;
     });
 
+    // called every time the user's location updates
     positionStream = location.onLocationChanged.listen(
       (LocationData? event) {
         myPosition = LatLng(event!.latitude!, event.longitude!);
 
-        // get distance to destination
+        // get distance from me to destination
         distanceBetweenPoints = Geolocator.distanceBetween(
           myPosition!.latitude,
           myPosition!.longitude,
@@ -154,6 +156,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           destination.longitude,
         );
 
+        // get angle between me and destination
         bearingToDestination = Geolocator.bearingBetween(
           myPosition!.latitude,
           myPosition!.longitude,
@@ -161,6 +164,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           destination.longitude,
         );
 
+        // calculate the angle of rotation for the direction arrow
+        // compassDirection will be a value between 0 and 1.
         compassDirection = (bearingToDestination + mapController.rotation);
         if (compassDirection < 0) compassDirection = 360 + compassDirection;
         compassDirection /= 360;
@@ -187,7 +192,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           // WE ARE NEARBY, SHOW COMPASS VIEW
           setState(() => _isNearby = true);
         } else {
-          // NOT CLOSE, HIDE COMPASS IF SHOWING
+          // NOT CLOSE, HIDE COMPASS
           // setState(() => _isNearby = false);
         }
       },
@@ -384,12 +389,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // log(polylines.toString());
-          // recenter the map
-          if (myPosition != null) {
-            mapController.move(myPosition!, maxZoom);
-          }
-
           setState(() => _isNearby = !_isNearby);
         },
         tooltip: 'Re-center',
