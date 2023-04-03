@@ -1,6 +1,6 @@
 # map_test
 
-A new Flutter project.
+A demo of OpenStreetMaps in Flutter with routing from OSRM
 
 ## Getting Started
 
